@@ -7,7 +7,7 @@ import (
 
 import (
 	"log"
-	"os"
+	//"os"
 )
 
 type Database struct {
@@ -160,17 +160,17 @@ func (d *Database) Create() (int, error) {
 
 func (d *Database) ReadConfig() {
 	log.Println("ReadConfig 读取文件")
-	dbpath := "db.json"
-	file, err := os.Open(dbpath) 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	data := make([]byte, 100)
-	count, err := file.Read(data)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("read %d bytes: %q\n", count, data[:count])
+	//dbpath := "db.json"
+	//file, err := os.Open(dbpath)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//data := make([]byte, 100)
+	//count, err := file.Read(data)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//log.Printf("read %d bytes: %q\n", count, data[:count])
 }
 
