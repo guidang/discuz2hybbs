@@ -1,12 +1,12 @@
 Discuz7.2 转换为 HYBBS
 ------
 
-### Thanks
+### 鸣谢
 ------
 https://github.com/lxn/walk
 
 
-### Contact Me
+### 联系
 ------
-Author: Skiychan <dev@skiy.net>   
-Link  : https://www.skiy.net
+作者: Skiychan <dev@skiy.net>   
+网站: https://www.skiy.net
