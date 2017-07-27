@@ -1,1 +1,1 @@
-{"Discuz":{"dbhost":"127.0.0.1","dbuser":"root","dbpwd":"123456","dbname":"discuz","dbport":"3306"},"Hybbs":{"dbhost":"localhost","dbuser":"root","dbpwd":"123456","dbname":"hybbs","dbport":"3306"}}
+{"Discuz":{"dbhost":"127.0.0.1","dbuser":"root","dbpwd":"123456","dbname":"disduzx","dbport":"3306"},"Hybbs":{"dbhost":"localhost","dbuser":"root","dbpwd":"123456","dbname":"hybbs","dbport":"3306"}}

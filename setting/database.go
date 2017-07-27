@@ -31,7 +31,7 @@ type Hostinfo struct {
 }
 
 var (
-	data   dbconf
+	Data   Dbconf
 	animal        = new(Hostinfo)
 	dbpath string = "db.json"
 )
@@ -102,11 +102,6 @@ func (d *Database) Create() (int, error) {
 					},
 					LineEdit{
 						Text: Bind("Dbport"),
-					},
-					Label{
-						Font:       Font{Family: "微软雅黑", PointSize: 18, Bold: true, Underline: true},
-						ColumnSpan: 2,
-						Text: " ",
 					},
 					Label{
 						Font:       Font{Family: "微软雅黑", PointSize: 16, Bold: true, Underline: true},
@@ -192,44 +187,44 @@ func (d *Database) ReadConfig() (err error) {
 
 	//dataStr := fmt.Sprintf("%s", data)
 	//log.Println(dataStr)
-	if err := json.Unmarshal(bytes, &data); err != nil {
+	if err := json.Unmarshal(bytes, &Data); err != nil {
 		log.Println("Json转Struct出错")
 		log.Println(err)
 		return err
 	}
 
-	log.Println(data)
+	log.Println(Data)
 
-	animal.Dbhost = data.Discuz.Dbhost
-	animal.Dbuser = data.Discuz.Dbuser
-	animal.Dbpwd = data.Discuz.Dbpwd
-	animal.Dbname = data.Discuz.Dbname
-	animal.Dbport = data.Discuz.Dbport
+	animal.Dbhost = Data.Discuz.Dbhost
+	animal.Dbuser = Data.Discuz.Dbuser
+	animal.Dbpwd = Data.Discuz.Dbpwd
+	animal.Dbname = Data.Discuz.Dbname
+	animal.Dbport = Data.Discuz.Dbport
 
-	animal.Dbhost2 = data.Hybbs.Dbhost
-	animal.Dbuser2 = data.Hybbs.Dbuser
-	animal.Dbpwd2 = data.Hybbs.Dbpwd
-	animal.Dbname2 = data.Hybbs.Dbname
-	animal.Dbport2 = data.Hybbs.Dbport
+	animal.Dbhost2 = Data.Hybbs.Dbhost
+	animal.Dbuser2 = Data.Hybbs.Dbuser
+	animal.Dbpwd2 = Data.Hybbs.Dbpwd
+	animal.Dbname2 = Data.Hybbs.Dbname
+	animal.Dbport2 = Data.Hybbs.Dbport
 
 	return err
 }
 
 func (d *Database) WriteConfig() (err error) {
 
-	data.Discuz.Dbhost = animal.Dbhost
-	data.Discuz.Dbuser = animal.Dbuser
-	data.Discuz.Dbpwd = animal.Dbpwd
-	data.Discuz.Dbname = animal.Dbname
-	data.Discuz.Dbport = animal.Dbport
+	Data.Discuz.Dbhost = animal.Dbhost
+	Data.Discuz.Dbuser = animal.Dbuser
+	Data.Discuz.Dbpwd = animal.Dbpwd
+	Data.Discuz.Dbname = animal.Dbname
+	Data.Discuz.Dbport = animal.Dbport
 
-	data.Hybbs.Dbhost = animal.Dbhost2
-	data.Hybbs.Dbuser = animal.Dbuser2
-	data.Hybbs.Dbpwd = animal.Dbpwd2
-	data.Hybbs.Dbname = animal.Dbname2
-	data.Hybbs.Dbport = animal.Dbport2
+	Data.Hybbs.Dbhost = animal.Dbhost2
+	Data.Hybbs.Dbuser = animal.Dbuser2
+	Data.Hybbs.Dbpwd = animal.Dbpwd2
+	Data.Hybbs.Dbname = animal.Dbname2
+	Data.Hybbs.Dbport = animal.Dbport2
 
-	dataByte, err := json.Marshal(data)
+	dataByte, err := json.Marshal(Data)
 	if err != nil {
 		log.Println(err)
 	}
@@ -243,7 +238,7 @@ func (d *Database) WriteConfig() (err error) {
 	return err
 }
 
-type dbinfo struct {
+type Dbinfo struct {
 	Dbhost string `json:"dbhost"`
 	Dbuser string `json:"dbuser"`
 	Dbpwd  string `json:"dbpwd"`
@@ -251,7 +246,7 @@ type dbinfo struct {
 	Dbport string `json:"dbport"`
 }
 
-type dbconf struct {
+type Dbconf struct {
 	Discuz,
-	Hybbs dbinfo
+	Hybbs Dbinfo
 }

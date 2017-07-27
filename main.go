@@ -15,6 +15,7 @@ import (
 
 import (
 	"./setting"
+	"./model"
 )
 
 var isSpecialMode = walk.NewMutableCondition()
@@ -64,16 +65,34 @@ func main() {
 			},
 		},
 		Children: []Widget{
-			PushButton{
-				Text: "配置数据库",
-				OnClicked: func() {
-					db := new(setting.Database)
-					db.Init(mw)
-					if cmd, err := db.Create(); err != nil {
-						log.Print(err)
-					} else if cmd == walk.DlgCmdOK {
+			HSplitter{
+				Children: []Widget{
+					PushButton{
+						Text: "配置数据库",
+						OnClicked: func() {
+							db := new(setting.Database)
+							db.Init(mw)
+							if cmd, err := db.Create(); err != nil {
+								log.Print(err)
+							} else if cmd == walk.DlgCmdOK {
 
-					}
+							}
+						},
+					},
+					PushButton{
+						Text: "配置管理员",
+						OnClicked: func() {
+							log.Println("点击配置管理员")
+						},
+					},
+				},
+			},
+			PushButton{
+				Text: "开始转换",
+				OnClicked: func() {
+					log.Println("点击开始转换")
+					convert := new(model.Convert)
+					convert.Init(mw)
 				},
 			},
 		},
