@@ -160,7 +160,7 @@ func (d *Database) Create() (int, error) {
 
 							dlg.Accept()
 							d.WriteConfig()
-							
+
 							log.Printf("%+v", animal)
 						},
 					},
