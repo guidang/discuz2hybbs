@@ -14,8 +14,8 @@ import (
 )
 
 import (
-	"./setting"
 	"./model"
+	"./setting"
 )
 
 var isSpecialMode = walk.NewMutableCondition()

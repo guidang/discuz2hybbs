@@ -6,22 +6,22 @@ import (
 )
 
 import (
-	"log"
 	"../setting"
 	"database/sql"
-	"fmt"
-	"os"
-	"io/ioutil"
 	"encoding/json"
 	"errors"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
+	"log"
+	"os"
 )
 
 var (
-	dbinfo setting.Dbinfo
-	dbconf setting.Dbconf
+	dbinfo   setting.Dbinfo
+	dbconf   setting.Dbconf
 	DiscuzDb *sql.DB
-	HybbsDb *sql.DB
+	HybbsDb  *sql.DB
 )
 
 type Convert struct {
@@ -113,7 +113,7 @@ func (c *Convert) CheckConnect(flag int) (db *sql.DB, err error) {
 	return
 }
 
-func (c *Convert) ToHybbs() (err error){
+func (c *Convert) ToHybbs() (err error) {
 	c.ReadConfig()
 
 	DiscuzDb, err = c.CheckConnect(1)
@@ -140,7 +140,7 @@ func (c *Convert) ToHybbs() (err error){
 	return nil
 }
 
-func (c *Convert) Test() (err error){
+func (c *Convert) Test() (err error) {
 	log.Println("Test")
 	rows, err := DiscuzDb.Query("SELECT * FROM pre_common_member")
 	if err != nil {

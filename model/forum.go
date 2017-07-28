@@ -2,13 +2,13 @@ package model
 
 import (
 	"database/sql"
-	"log"
 	"fmt"
+	"log"
 	"regexp"
 )
 
 var (
-	tbname string = "hy_forum"
+	tbname  string = "hy_forum"
 	tbname2 string = "hy_forum_group"
 )
 
@@ -37,7 +37,7 @@ type hyForum struct {
 	desc string
 }
 
-func (f * Forum) Init(hdb, ddb *sql.DB) (err error){
+func (f *Forum) Init(hdb, ddb *sql.DB) (err error) {
 	f.Hdb = hdb
 	f.Ddb = ddb
 
@@ -76,7 +76,7 @@ func (f *Forum) ToConvert() (err error) {
 
 	for data.Next() {
 		d1 := new(dzForum)
-		err = data.Scan(&d1.fid, &d1.fup, &d1.types, &d1.name, &d1.threads, &d1.posts, &d1.desc);
+		err = data.Scan(&d1.fid, &d1.fup, &d1.types, &d1.name, &d1.threads, &d1.posts, &d1.desc)
 		if err != nil {
 			log.Println("Dz forum 扫描取值失败")
 			log.Println(err)
@@ -176,5 +176,5 @@ func filterName(str string, lenght int) string {
 	if lenght > lth {
 		lenght = lth
 	}
-	return string(nameStr[: lenght])
+	return string(nameStr[:lenght])
 }

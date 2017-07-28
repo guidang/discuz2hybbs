@@ -1,17 +1,17 @@
 package model
 
 import (
-	"fmt"
 	"database/sql"
+	"fmt"
 	"log"
 )
 
 /**
- 清空table
- */
+清空table
+*/
 func Truncate(db *sql.DB, tb string) (err error) {
 	sqlStr := fmt.Sprintf("TRUNCATE TABLE %s", tb)
-	_, err = db.Exec(sqlStr);
+	_, err = db.Exec(sqlStr)
 
 	if err != nil {
 		log.Println(err)

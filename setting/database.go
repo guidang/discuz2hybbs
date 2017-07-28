@@ -6,11 +6,11 @@ import (
 )
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
-	"io/ioutil"
-	"fmt"
-	"encoding/json"
 )
 
 type Database struct {
@@ -229,7 +229,7 @@ func (d *Database) WriteConfig() (err error) {
 		log.Println(err)
 	}
 
-	err = ioutil.WriteFile(dbpath, dataByte, 0755);
+	err = ioutil.WriteFile(dbpath, dataByte, 0755)
 
 	if err != nil {
 		log.Println(err)
