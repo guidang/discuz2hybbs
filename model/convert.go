@@ -31,6 +31,7 @@ type Convert struct {
 func (c *Convert) Init(owner walk.Form) {
 	c.form = owner
 	log.Println("Convert init")
+	c.ToHybbs()
 }
 
 func (c *Convert) ReadConfig() {
@@ -119,15 +120,24 @@ func (c *Convert) ToHybbs() (err error){
 	if err != nil {
 		log.Println(err)
 		log.Println("Discuz数据库连接失败")
+		return
 	}
 
 	HybbsDb, err = c.CheckConnect(2)
 	if err != nil {
 		log.Println(err)
 		log.Println("Hybbs数据库连接失败")
+		return
 	}
 
-	return
+	f := new(Forum)
+	err = f.Init(HybbsDb, DiscuzDb)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	return nil
 }
 
 func (c *Convert) Test() (err error){

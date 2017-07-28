@@ -8,7 +8,7 @@ Discuz7.2 转换为 HYBBS
 
 ##
 
-### 鸣谢
+### 鸣谢(本项目使用到的开源库)
 https://github.com/lxn/walk
 
 

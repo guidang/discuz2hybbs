@@ -121,7 +121,7 @@ func (mw *MyMainWindow) changeViewAction_Triggered() {
 }
 
 func (mw *MyMainWindow) showAboutBoxAction_Triggered() {
-	var msg string = "作者: Skiychan\r\n邮箱: dev@skiy.net\r\n网站: https://www.skiy.net"
+	var msg string = "作者: Skiychan\r\n邮箱: dev@skiy.net\r\n网站: https://www.skiy.net\r\n版本: 0.0.1"
 	walk.MsgBox(mw, "关于", msg, walk.MsgBoxIconInformation)
 }
 
