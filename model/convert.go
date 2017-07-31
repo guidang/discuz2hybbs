@@ -130,28 +130,29 @@ func (c *Convert) ToHybbs() (err error) {
 		return
 	}
 
-	f := new(Forum)
-	err = f.Init(HybbsDb, DiscuzDb)
+	//版块转换
+	//f := new(Forum)
+	//err = f.Init()
+	//if err != nil {
+	//	log.Println(err)
+	//	return
+	//}
+
+	//主题转换
+	//t := new(Thread)
+	//err = t.Init()
+	//if err != nil {
+	//	log.Println(err)
+	//	return
+	//}
+
+	//帖子转换
+	p := new(Post)
+	err = p.Init()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	return nil
-}
-
-func (c *Convert) Test() (err error) {
-	log.Println("Test")
-	rows, err := DiscuzDb.Query("SELECT * FROM pre_common_member")
-	if err != nil {
-		log.Println("test")
-		log.Println(err)
-		return
-	}
-	var t int
-	for rows.Next() {
-		t += 1
-		log.Println(t)
-	}
-	return err
 }

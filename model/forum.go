@@ -1,20 +1,14 @@
 package model
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"regexp"
 )
 
-var (
-	tbname  string = "hy_forum"
-	tbname2 string = "hy_forum_group"
-)
-
 type Forum struct {
-	Hdb *sql.DB
-	Ddb *sql.DB
+	tbname,
+	tbname2 string
 }
 
 type dzForum struct {
@@ -37,32 +31,31 @@ type hyForum struct {
 	desc string
 }
 
-func (f *Forum) Init(hdb, ddb *sql.DB) (err error) {
-	f.Hdb = hdb
-	f.Ddb = ddb
-
+func (f *Forum) Init() (err error) {
+	f.tbname = "hy_forum"
+	f.tbname2 = "hy_forum_group"
 	return f.ToConvert()
 }
 
 func (f *Forum) ToConvert() (err error) {
 	log.Println("forum ToConvert")
 
-	err = Truncate(f.Hdb, tbname)
+	err = Truncate(HybbsDb, f.tbname)
 	if err != nil {
 		return
 	}
 
 	dzSqlStr := "SELECT f.fid, f.fup, f.type, f.name, f.threads, f.posts, z.description  FROM `cdb_forums` f LEFT JOIN `cdb_forumfields` z ON f.fid = z.fid"
-	hySqlStr := fmt.Sprintf("INSERT INTO %s (id, fid, fgid, name, threads, posts, html, name2, forumg, json, color, background) VALUES (?, ?, ?, ?, ?, ?, ?, '', '', '', '', '')", tbname)
+	hySqlStr := fmt.Sprintf("INSERT INTO %s (id, fid, fgid, name, threads, posts, html, name2, forumg, json, color, background) VALUES (?, ?, ?, ?, ?, ?, ?, '', '', '', '', '')", f.tbname)
 
-	data, err := f.Ddb.Query(dzSqlStr)
+	data, err := DiscuzDb.Query(dzSqlStr)
 	if err != nil {
 		log.Println("Dz forum 查询失败: " + dzSqlStr)
 		log.Println(err)
 		return
 	}
 
-	stmt, err := f.Hdb.Prepare(hySqlStr)
+	stmt, err := HybbsDb.Prepare(hySqlStr)
 	if err != nil {
 		log.Println("Hy forum 预加载失败: " + hySqlStr)
 		log.Println(err)
@@ -74,6 +67,8 @@ func (f *Forum) ToConvert() (err error) {
 	cateGroup := make(map[string]string)
 	groupMap := make(map[string]string)
 
+	var fid, fgid, name string
+
 	for data.Next() {
 		d1 := new(dzForum)
 		err = data.Scan(&d1.fid, &d1.fup, &d1.types, &d1.name, &d1.threads, &d1.posts, &d1.desc)
@@ -83,7 +78,6 @@ func (f *Forum) ToConvert() (err error) {
 			return
 		}
 
-		var fid, fgid, name string
 		if d1.types == "forum" {
 			fid = "-1"
 			fgid = d1.fup
@@ -93,7 +87,7 @@ func (f *Forum) ToConvert() (err error) {
 		}
 
 		name = filterName(d1.name, 12)
-		log.Println(name)
+		//log.Println(name)
 
 		if d1.types == "group" {
 			groupMap[d1.fid] = filterName(d1.name, 32)
@@ -119,21 +113,21 @@ func (f *Forum) ToConvert() (err error) {
 
 	//log.Println(groupMap)
 	//分组表
-	stmt2, err := f.Hdb.Prepare(fmt.Sprintf("INSERT INTO %s (id, name) VALUES (?, ?)", tbname2))
+	stmt2, err := HybbsDb.Prepare(fmt.Sprintf("INSERT INTO %s (id, name) VALUES (?, ?)", f.tbname2))
 	if err != nil {
-		log.Println(tbname2 + " 预加载失败: ")
+		log.Println(f.tbname2 + " 预加载失败: ")
 		log.Println(err)
 		return
 	}
-	err = Truncate(f.Hdb, tbname2)
+	err = Truncate(HybbsDb, f.tbname2)
 	if err != nil {
 		return
 	}
 	for index, value := range groupMap {
-		fmt.Printf("arr[%d]=%s \n", index, value)
+		//fmt.Printf("arr[%s]=%s \n", index, value)
 		_, err = stmt2.Exec(index, value)
 		if err != nil {
-			log.Println(tbname2 + " 导入失败")
+			log.Println(f.tbname2 + " 导入失败")
 			return
 		}
 	}
@@ -143,7 +137,7 @@ func (f *Forum) ToConvert() (err error) {
 	//log.Println(dataArr)
 	//分类表
 	for _, value := range dataArr {
-		//fmt.Printf("arr[%d]=%s \n", index, value)
+		//fmt.Printf("arr[%s]=%s \n", index, value)
 		if value.fgid == "0" {
 			value.fgid = cateGroup[value.fid]
 		}
@@ -156,15 +150,15 @@ func (f *Forum) ToConvert() (err error) {
 	}
 
 	if err == nil {
-		log.Printf("%s 转换成功, 总共插入 %d 条数据", tbname, stat)
+		log.Printf("%s 转换成功, 总共插入 %d 条数据", f.tbname, stat)
 	} else {
-		log.Printf("%s 转换失败", tbname)
+		log.Printf("%s 转换失败", f.tbname)
 	}
 	return
 }
 
 func filterName(str string, lenght int) string {
-	log.Println("filterName")
+	//log.Println("filterName")
 	var match = regexp.MustCompile(`-\.-(.*)`)
 	ret := match.FindStringSubmatch(str)
 	if len(ret) > 1 {
