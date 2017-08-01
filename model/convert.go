@@ -7,6 +7,7 @@ import (
 
 import (
 	"../setting"
+	conf "../setting"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -25,13 +26,8 @@ var (
 )
 
 type Convert struct {
-	form walk.Form
-}
-
-func (c *Convert) Init(owner walk.Form) {
-	c.form = owner
-	log.Println("Convert init")
-	c.ToHybbs()
+	Info conf.Info
+	Form walk.Form
 }
 
 func (c *Convert) ReadConfig() {
@@ -49,7 +45,7 @@ func (c *Convert) ReadConfig() {
 		return
 	}
 
-	fmt.Printf("读取的数据:\n%s\n", bytes)
+	//fmt.Printf("读取的数据:\n%s\n", bytes)
 
 	//dataStr := fmt.Sprintf("%s", data)
 	//log.Println(dataStr)
@@ -61,7 +57,7 @@ func (c *Convert) ReadConfig() {
 }
 
 func (c *Convert) CheckConnect(flag int) (db *sql.DB, err error) {
-	log.Println("CheckConnect 检测数据库连接")
+	//log.Println("CheckConnect 检测数据库连接")
 
 	//log.Println(dbconf)
 
@@ -98,10 +94,10 @@ func (c *Convert) CheckConnect(flag int) (db *sql.DB, err error) {
 		dbinfo.Dbname,
 		"utf8",
 	)
-	log.Println("dbStr: " + dbStr)
+	//log.Println("dbStr: " + dbStr)
 
-	db, err1 := sql.Open("mysql", dbStr)
-	log.Println(err1)
+	db, err = sql.Open("mysql", dbStr)
+	//log.Println(err)
 	if err != nil {
 		log.Println(err)
 	}
@@ -131,24 +127,34 @@ func (c *Convert) ToHybbs() (err error) {
 	}
 
 	//版块转换
-	//f := new(Forum)
-	//err = f.Init()
-	//if err != nil {
-	//	log.Println(err)
-	//	return
-	//}
+	f := new(Forum)
+	err = f.Init()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	//主题转换
-	//t := new(Thread)
-	//err = t.Init()
-	//if err != nil {
-	//	log.Println(err)
-	//	return
-	//}
+	t := new(Thread)
+	err = t.Init()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	//帖子转换
 	p := new(Post)
 	err = p.Init()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	//用户转换
+	u := new(User)
+	u.adminid = c.Info.Adminid
+
+	err = u.Init()
 	if err != nil {
 		log.Println(err)
 		return

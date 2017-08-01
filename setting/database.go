@@ -7,14 +7,14 @@ import (
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 )
 
 type Database struct {
-	form walk.Form
+	Animal Hostinfo
+	Form   walk.Form
 }
 
 type Hostinfo struct {
@@ -32,14 +32,8 @@ type Hostinfo struct {
 
 var (
 	Data   Dbconf
-	animal        = new(Hostinfo)
 	dbpath string = "db.json"
 )
-
-func (d *Database) Init(owner walk.Form) {
-	d.form = owner
-	log.Println("database init")
-}
 
 func (d *Database) Create() (int, error) {
 	log.Println("database Create")
@@ -51,15 +45,16 @@ func (d *Database) Create() (int, error) {
 	var dlg *walk.Dialog
 	var db *walk.DataBinder
 	var acceptPB, cancelPB *walk.PushButton
+	log.Println(d.Animal)
 
 	return Dialog{
 		AssignTo:      &dlg,
-		Title:         "配置数据库",
+		Title:         "数据库配置",
 		DefaultButton: &acceptPB,
 		CancelButton:  &cancelPB,
 		DataBinder: DataBinder{
 			AssignTo:       &db,
-			DataSource:     animal,
+			DataSource:     &d.Animal,
 			ErrorPresenter: ToolTipErrorPresenter{},
 		},
 		MinSize: Size{300, 300},
@@ -156,7 +151,7 @@ func (d *Database) Create() (int, error) {
 							dlg.Accept()
 							d.WriteConfig()
 
-							log.Printf("%+v", animal)
+							//log.Printf("%+v", d.Animal)
 						},
 					},
 					PushButton{
@@ -167,7 +162,7 @@ func (d *Database) Create() (int, error) {
 				},
 			},
 		},
-	}.Run(d.form)
+	}.Run(d.Form)
 }
 
 func (d *Database) ReadConfig() (err error) {
@@ -183,7 +178,7 @@ func (d *Database) ReadConfig() (err error) {
 		return err
 	}
 
-	fmt.Printf("读取的数据:\n%s\n", bytes)
+	//fmt.Printf("读取的数据:\n%s\n", bytes)
 
 	//dataStr := fmt.Sprintf("%s", data)
 	//log.Println(dataStr)
@@ -195,34 +190,34 @@ func (d *Database) ReadConfig() (err error) {
 
 	log.Println(Data)
 
-	animal.Dbhost = Data.Discuz.Dbhost
-	animal.Dbuser = Data.Discuz.Dbuser
-	animal.Dbpwd = Data.Discuz.Dbpwd
-	animal.Dbname = Data.Discuz.Dbname
-	animal.Dbport = Data.Discuz.Dbport
+	d.Animal.Dbhost = Data.Discuz.Dbhost
+	d.Animal.Dbuser = Data.Discuz.Dbuser
+	d.Animal.Dbpwd = Data.Discuz.Dbpwd
+	d.Animal.Dbname = Data.Discuz.Dbname
+	d.Animal.Dbport = Data.Discuz.Dbport
 
-	animal.Dbhost2 = Data.Hybbs.Dbhost
-	animal.Dbuser2 = Data.Hybbs.Dbuser
-	animal.Dbpwd2 = Data.Hybbs.Dbpwd
-	animal.Dbname2 = Data.Hybbs.Dbname
-	animal.Dbport2 = Data.Hybbs.Dbport
+	d.Animal.Dbhost2 = Data.Hybbs.Dbhost
+	d.Animal.Dbuser2 = Data.Hybbs.Dbuser
+	d.Animal.Dbpwd2 = Data.Hybbs.Dbpwd
+	d.Animal.Dbname2 = Data.Hybbs.Dbname
+	d.Animal.Dbport2 = Data.Hybbs.Dbport
 
 	return err
 }
 
 func (d *Database) WriteConfig() (err error) {
 
-	Data.Discuz.Dbhost = animal.Dbhost
-	Data.Discuz.Dbuser = animal.Dbuser
-	Data.Discuz.Dbpwd = animal.Dbpwd
-	Data.Discuz.Dbname = animal.Dbname
-	Data.Discuz.Dbport = animal.Dbport
+	Data.Discuz.Dbhost = d.Animal.Dbhost
+	Data.Discuz.Dbuser = d.Animal.Dbuser
+	Data.Discuz.Dbpwd = d.Animal.Dbpwd
+	Data.Discuz.Dbname = d.Animal.Dbname
+	Data.Discuz.Dbport = d.Animal.Dbport
 
-	Data.Hybbs.Dbhost = animal.Dbhost2
-	Data.Hybbs.Dbuser = animal.Dbuser2
-	Data.Hybbs.Dbpwd = animal.Dbpwd2
-	Data.Hybbs.Dbname = animal.Dbname2
-	Data.Hybbs.Dbport = animal.Dbport2
+	Data.Hybbs.Dbhost = d.Animal.Dbhost2
+	Data.Hybbs.Dbuser = d.Animal.Dbuser2
+	Data.Hybbs.Dbpwd = d.Animal.Dbpwd2
+	Data.Hybbs.Dbname = d.Animal.Dbname2
+	Data.Hybbs.Dbport = d.Animal.Dbport2
 
 	dataByte, err := json.Marshal(Data)
 	if err != nil {

@@ -16,9 +16,13 @@ import (
 import (
 	"./model"
 	"./setting"
+	"fmt"
+	"time"
 )
 
 var isSpecialMode = walk.NewMutableCondition()
+
+var info setting.Info
 
 type MyMainWindow struct {
 	*walk.MainWindow
@@ -29,23 +33,15 @@ func main() {
 
 	mw := new(MyMainWindow)
 
-	var openAction, showAboutBoxAction *walk.Action
+	var showAboutBoxAction *walk.Action
 
 	if err := (MainWindow{
 		AssignTo: &mw.MainWindow,
 		Title:    "Discuz转Hybbs",
 		MenuItems: []MenuItem{
 			Menu{
-				Text: "&File",
+				Text: "&菜单",
 				Items: []MenuItem{
-					Action{
-						AssignTo:    &openAction,
-						Text:        "&Open",
-						Enabled:     Bind("enabledCB.Checked"),
-						Visible:     Bind("!openHiddenCB.Checked"),
-						Shortcut:    Shortcut{walk.ModControl, walk.KeyO},
-						OnTriggered: mw.openAction_Triggered,
-					},
 					Separator{},
 					Action{
 						Text:        "退出",
@@ -68,10 +64,10 @@ func main() {
 			HSplitter{
 				Children: []Widget{
 					PushButton{
-						Text: "配置数据库",
+						Text: "数据库配置",
 						OnClicked: func() {
 							db := new(setting.Database)
-							db.Init(mw)
+							db.Form = mw
 							if cmd, err := db.Create(); err != nil {
 								log.Print(err)
 							} else if cmd == walk.DlgCmdOK {
@@ -80,9 +76,18 @@ func main() {
 						},
 					},
 					PushButton{
-						Text: "配置管理员",
+						Text: "基本配置",
 						OnClicked: func() {
-							log.Println("点击配置管理员")
+							cf := new(setting.Config)
+							cf.Form = mw
+							var cmd int
+							var err error
+							cmd, err, info = cf.Create()
+
+							if err != nil {
+								log.Print(err)
+							} else if cmd == walk.DlgCmdOK {
+							}
 						},
 					},
 				},
@@ -91,15 +96,25 @@ func main() {
 				Text: "开始转换",
 				OnClicked: func() {
 					log.Println("点击开始转换")
-					convert := new(model.Convert)
-					convert.Init(mw)
+					t1 := time.Now()
+					convert := model.Convert{
+						info,
+						mw,
+					}
+
+					err := convert.ToHybbs()
+					if err == nil {
+						t2 := time.Now()
+						d := t2.Sub(t1)
+						fmt.Printf("\r\n已经成功将 Discuz 转换成 Hybbs, 总共耗时: %s\r\n", d)
+					}
 				},
 			},
 		},
 		ContextMenuItems: []MenuItem{
 			ActionRef{&showAboutBoxAction},
 		},
-		MinSize: Size{300, 200},
+		MinSize: Size{300, 120},
 		Layout:  VBox{},
 	}.Create()); err != nil {
 		log.Fatal(err)
@@ -121,7 +136,12 @@ func (mw *MyMainWindow) changeViewAction_Triggered() {
 }
 
 func (mw *MyMainWindow) showAboutBoxAction_Triggered() {
-	var msg string = "作者: Skiychan\r\n邮箱: dev@skiy.net\r\n网站: https://www.skiy.net\r\n版本: 0.0.1"
+	var msg string = `
+作者: Skiychan
+Q Q:  1005043848
+邮箱: dev@skiy.net
+网站: https://www.skiy.net
+版本: 0.0.1`
 	walk.MsgBox(mw, "关于", msg, walk.MsgBoxIconInformation)
 }
 
