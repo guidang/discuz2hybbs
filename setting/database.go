@@ -45,7 +45,7 @@ func (d *Database) Create() (int, error) {
 	var dlg *walk.Dialog
 	var db *walk.DataBinder
 	var acceptPB, cancelPB *walk.PushButton
-	log.Println(d.Animal)
+	//log.Println(d.Animal)
 
 	return Dialog{
 		AssignTo:      &dlg,
@@ -188,7 +188,7 @@ func (d *Database) ReadConfig() (err error) {
 		return err
 	}
 
-	log.Println(Data)
+	//log.Println(Data)
 
 	d.Animal.Dbhost = Data.Discuz.Dbhost
 	d.Animal.Dbuser = Data.Discuz.Dbuser

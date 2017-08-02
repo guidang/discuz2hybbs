@@ -3,7 +3,18 @@ Discuz7.2 转换为 HYBBS
 一个将Discuz7.2转换成Hybbs的Windows应用程序。
 
 ## 使用教程
-- 
+**安装本项目**
+```
+go get github.com/skiy/DiscuzToHybbs
+```
+**编译项目**, 在项目目录下生成 ***exe*** 文件, 打开时会调用 ***CMD*** 窗口
+```
+go build
+```
+**编译上线项目**, 在项目目录下生成 ***exe*** 文件, 打开时***不会***调用 ***CMD*** 调试窗口
+```
+go build -ldflags="-H windowsgui"
+```
 
 ## TODO
 - ✔实现数据库配置信息的读写

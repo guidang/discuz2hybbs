@@ -18,7 +18,7 @@ type Info struct {
 	Adminid string
 }
 
-func (c *Config) Create() (code int, err error, info Info) {
+func (c *Config) Create() (code int, err error) {
 	log.Println("config Create")
 
 	var dlg *walk.Dialog
@@ -68,7 +68,6 @@ func (c *Config) Create() (code int, err error, info Info) {
 							}
 
 							dlg.Accept()
-							info = c.Animal
 							//log.Printf("%+v", c.Animal)
 						},
 					},

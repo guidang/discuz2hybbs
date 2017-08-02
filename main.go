@@ -22,7 +22,7 @@ import (
 
 var isSpecialMode = walk.NewMutableCondition()
 
-var info setting.Info
+var cf setting.Config
 
 type MyMainWindow struct {
 	*walk.MainWindow
@@ -35,7 +35,10 @@ func main() {
 
 	var showAboutBoxAction *walk.Action
 
+	cf.Form = mw
+
 	if err := (MainWindow{
+		Icon: "dh.ico",
 		AssignTo: &mw.MainWindow,
 		Title:    "Discuz转Hybbs",
 		MenuItems: []MenuItem{
@@ -78,11 +81,9 @@ func main() {
 					PushButton{
 						Text: "基本配置",
 						OnClicked: func() {
-							cf := new(setting.Config)
-							cf.Form = mw
 							var cmd int
 							var err error
-							cmd, err, info = cf.Create()
+							cmd, err = cf.Create()
 
 							if err != nil {
 								log.Print(err)
@@ -98,7 +99,7 @@ func main() {
 					log.Println("点击开始转换")
 					t1 := time.Now()
 					convert := model.Convert{
-						info,
+						cf.Animal,
 						mw,
 					}
 
