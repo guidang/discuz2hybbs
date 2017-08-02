@@ -8,14 +8,14 @@ Discuz7.2 转换为 HYBBS
 - ✔实现数据的转换 - hy_thread
 - ✔实现数据的转换 - hy_post
 - ✔实现数据的转换 - hy_user.
-- <del>实现数据的转换 - hy_file</del> (由于hybbs的附件是按用户来分组的,与dz严重相相符,故此功能解决不了)
-- 优化数据库 - 用多线程方式插入数据库
+- <del>实现数据的转换 - hy_file</del> (由于hybbs与discuz附件架构严重冲突,故暂时解决不了)
+- ✔优化数据库 - 使用事务处理方式
 - 优化 GUI 窗口 - 添加转换日志展示
 - 添加 **Discuz!X3.x** 的转换
 
 ## 注意事项
-> 由于此项目本身是本人自用的，程序为 Discuz!7.2, 默认的表前缀及 ucenter 表, 所以未必能与他人的通用；
-> 
+> 由于此项目本身是本人自用的，程序为 Discuz!7.2, ucenter 与 Discuz 相同数据库；   
+> discuz 表前缀为 **cdb_**，ucenter 表前缀为 **cdb_uc_**。
 
 ### 鸣谢(本项目使用到的开源库)
 - https://github.com/lxn/walk   
@@ -24,4 +24,5 @@ Discuz7.2 转换为 HYBBS
 
 ## 联系
 作者: Skiychan <dev@skiy.net>   
+QQ  : 1005043848   
 网站: https://www.skiy.net

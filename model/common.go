@@ -1,7 +1,6 @@
 package model
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 )
@@ -9,10 +8,10 @@ import (
 /**
 清空table
 */
-func Truncate(db *sql.DB, tb string) (err error) {
+func Truncate(tb string) (err error) {
 	sqlStr := fmt.Sprintf("TRUNCATE TABLE %s", tb)
-	_, err = db.Exec(sqlStr)
 
+	_, err = HybbsDb.Exec(sqlStr)
 	if err != nil {
 		log.Println(err)
 		log.Printf("清空表 %s 失败", tb)

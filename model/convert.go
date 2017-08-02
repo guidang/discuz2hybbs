@@ -23,6 +23,8 @@ var (
 	dbconf   setting.Dbconf
 	DiscuzDb *sql.DB
 	HybbsDb  *sql.DB
+	DiscuzDbTx *sql.Tx
+	HybbsDbTx *sql.Tx
 )
 
 type Convert struct {
@@ -109,6 +111,23 @@ func (c *Convert) CheckConnect(flag int) (db *sql.DB, err error) {
 	return
 }
 
+func (c *Convert) Tx() {
+	var err error
+	DiscuzDbTx, err = DiscuzDb.Begin()
+	if err != nil {
+		log.Println("Discuz 事务 Begin 失败")
+		log.Println(err)
+		return
+	}
+	HybbsDbTx, err = HybbsDb.Begin()
+	if err != nil {
+		log.Println("Hybbs 事务 Begin 失败")
+		log.Println(err)
+		return
+	}
+	return
+}
+
 func (c *Convert) ToHybbs() (err error) {
 	c.ReadConfig()
 
@@ -128,6 +147,7 @@ func (c *Convert) ToHybbs() (err error) {
 
 	//版块转换
 	f := new(Forum)
+	c.Tx()
 	err = f.Init()
 	if err != nil {
 		log.Println(err)
@@ -136,6 +156,7 @@ func (c *Convert) ToHybbs() (err error) {
 
 	//主题转换
 	t := new(Thread)
+	c.Tx()
 	err = t.Init()
 	if err != nil {
 		log.Println(err)
@@ -144,6 +165,7 @@ func (c *Convert) ToHybbs() (err error) {
 
 	//帖子转换
 	p := new(Post)
+	c.Tx()
 	err = p.Init()
 	if err != nil {
 		log.Println(err)
@@ -153,7 +175,7 @@ func (c *Convert) ToHybbs() (err error) {
 	//用户转换
 	u := new(User)
 	u.adminid = c.Info.Adminid
-
+	c.Tx()
 	err = u.Init()
 	if err != nil {
 		log.Println(err)

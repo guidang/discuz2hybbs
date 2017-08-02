@@ -46,9 +46,9 @@ func (u *User) Init() (err error) {
 }
 
 func (u *User) ToConvert() (err error) {
-	log.Println("user ToConvert")
+	log.Println("正在转换 " + u.tbname + " ...")
 
-	err = Truncate(HybbsDb, u.tbname)
+	err = Truncate(u.tbname)
 	if err != nil {
 		return
 	}
@@ -57,7 +57,7 @@ func (u *User) ToConvert() (err error) {
 	dzSqlStr := "SELECT m.uid, m.username, c.password, m.email, m.threads, m.posts, m.regdate, m.credits, m.lastvisit, c.salt FROM `cdb_members` m LEFT JOIN `cdb_uc_members` c ON c.uid = m.uid WHERE c.salt IS NOT NULL"
 	hySqlStr := fmt.Sprintf("INSERT INTO %s (id, user, pass, email, threads, posts, atime, credits, ctime, salt, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 2)", u.tbname)
 
-	data, err := DiscuzDb.Query(dzSqlStr)
+	data, err := DiscuzDbTx.Query(dzSqlStr)
 	if err != nil {
 		log.Println("Dz user 查询失败: " + dzSqlStr)
 		log.Println(err)
@@ -98,6 +98,8 @@ func (u *User) ToConvert() (err error) {
 
 		dataArr = append(dataArr, hydata)
 	}
+	defer DiscuzDbTx.Rollback()
+	DiscuzDbTx.Commit()
 
 	for _, value := range dataArr {
 		_, err = stmt.Exec(value.id, value.user, value.pass, value.email, value.threads, value.posts, value.atime, value.credits, value.ctime, value.salt)
@@ -107,6 +109,8 @@ func (u *User) ToConvert() (err error) {
 
 		stat++
 	}
+	defer HybbsDbTx.Rollback()
+	HybbsDbTx.Commit()
 
 	if err == nil {
 		log.Printf("%s 转换成功, 总共插入 %d 条数据", u.tbname, stat)

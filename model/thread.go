@@ -41,9 +41,9 @@ func (t *Thread) Init() (err error) {
 }
 
 func (t *Thread) ToConvert() (err error) {
-	log.Println("forum ToConvert")
+	log.Println("正在转换 " + t.tbname + " ...")
 
-	err = Truncate(HybbsDb, t.tbname)
+	err = Truncate(t.tbname)
 	if err != nil {
 		return
 	}
@@ -51,14 +51,14 @@ func (t *Thread) ToConvert() (err error) {
 	dzSqlStr := "SELECT t.tid, t.fid, t.authorid, p.pid, t.subject, t.dateline, t.lastpost, t.views, t.replies, t.attachment FROM `cdb_threads` t LEFT JOIN cdb_posts p ON p.tid = t.tid WHERE p.first = 1"
 	hySqlStr := fmt.Sprintf("INSERT INTO %s (id, fid, uid, pid, title, atime, btime, views, posts, files, summary, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', '')", t.tbname)
 
-	data, err := DiscuzDb.Query(dzSqlStr)
+	data, err := DiscuzDbTx.Query(dzSqlStr)
 	if err != nil {
 		log.Println("Dz thread 查询失败: " + dzSqlStr)
 		log.Println(err)
 		return
 	}
 
-	stmt, err := HybbsDb.Prepare(hySqlStr)
+	stmt, err := HybbsDbTx.Prepare(hySqlStr)
 	if err != nil {
 		log.Println("Hy thread 预加载失败: " + hySqlStr)
 		log.Println(err)
@@ -101,6 +101,8 @@ func (t *Thread) ToConvert() (err error) {
 
 		stat++
 	}
+	defer HybbsDbTx.Rollback()
+	HybbsDbTx.Commit()
 
 	if err == nil {
 		log.Printf("%s 转换成功, 总共插入 %d 条数据", t.tbname, stat)
