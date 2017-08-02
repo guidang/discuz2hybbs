@@ -7,11 +7,13 @@ import (
 import (
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
+	"github.com/skiy/DiscuzToHybbs/model"
+	"github.com/skiy/DiscuzToHybbs/setting"
 )
 
 import (
-	"./model"
-	"./setting"
+	//"./model"
+	//"./setting"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
