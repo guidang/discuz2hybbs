@@ -47,21 +47,26 @@ func (c *Convert) Create() {
 	t1 := time.Now()
 
 	Te = c.Te
-	c.ToHybbs()
-
+	err := c.ToHybbs()
 	t2 := time.Now()
 	d := t2.Sub(t1)
-	msg := fmt.Sprintf("\r\n已经成功将 Discuz 转换成 Hybbs, 总共耗时: %s\r\n", d)
+
+	var msg string
+	if err != nil {
+		msg = "\r\n\r\n=================================\r\nDiscuz 转换成 Hybbs 失败，请自行检查数据库配置\r\n【开发者】\r\nQQ: 1005043848\r\nEmail: dev@skiy.net\r\n意见反馈: https://github.com/skiy/DiscuzToHybbs\r\n\r\n"
+	} else {
+		msg = fmt.Sprintf("\r\n已经成功将 Discuz 转换成 Hybbs，总共耗时: %s\r\n", d)
+	}
 
 	msg = Te.Text() + msg
 	Te.SetText(msg)
 }
 
-func (c *Convert) ReadConfig() {
+func (c *Convert) ReadConfig() (err error) {
 	SetConvertLog("读取数据库配置信息...", 0)
 
 	dbpath := "db.json"
-	if _, err := os.Stat(dbpath); os.IsNotExist(err) {
+	if _, err = os.Stat(dbpath); os.IsNotExist(err) {
 		SetConvertLog("数据库配置文件不存在", -1)
 		log.Println(err)
 		return
@@ -77,11 +82,13 @@ func (c *Convert) ReadConfig() {
 
 	//dataStr := fmt.Sprintf("%s", data)
 	//log.Println(dataStr)
-	if err := json.Unmarshal(bytes, &dbconf); err != nil {
+	if err = json.Unmarshal(bytes, &dbconf); err != nil {
 		SetConvertLog("Json转Struct出错", -1)
 		log.Println(err)
 		return
 	}
+
+	return nil
 }
 
 func (c *Convert) CheckConnect(flag int) (db *sql.DB, err error) {
@@ -154,21 +161,19 @@ func (c *Convert) Tx() {
 	return
 }
 
-func (c *Convert) ToHybbs() {
+func (c *Convert) ToHybbs() (err error) {
 	c.ReadConfig()
-	var err error
-
 	DiscuzDb, err = c.CheckConnect(1)
 	if err != nil {
+		SetConvertLog(fmt.Sprintf("Discuz数据库连接失败，具体原因：\r\n%s", err.Error()), -1)
 		log.Println(err)
-		log.Println("Discuz数据库连接失败")
 		return
 	}
 
 	HybbsDb, err = c.CheckConnect(2)
 	if err != nil {
+		SetConvertLog(fmt.Sprintf("Hybbs数据库连接失败，具体原因：\r\n%s", err.Error()), -1)
 		log.Println(err)
-		log.Println("Hybbs数据库连接失败")
 		return
 	}
 
@@ -210,4 +215,5 @@ func (c *Convert) ToHybbs() {
 	}
 
 	SetConvertLog("", 2)
+	return nil
 }

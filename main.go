@@ -46,7 +46,7 @@ func main() {
 	cf.Form = mw
 
 	if err := (MainWindow{
-		Icon:     "dh.ico",
+		//Icon:     "dh.ico",
 		AssignTo: &mw.MainWindow,
 		Title:    "Discuz转Hybbs",
 		MenuItems: []MenuItem{
@@ -127,7 +127,8 @@ func main() {
 			TextEdit{
 				AssignTo: &te,
 				ReadOnly: true,
-				MinSize:  Size{300, 300},
+				MinSize:  Size{300, 240},
+				VScroll:  true,
 			},
 		},
 		ContextMenuItems: []MenuItem{
