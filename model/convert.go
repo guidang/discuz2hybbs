@@ -19,12 +19,12 @@ import (
 )
 
 var (
-	dbinfo   setting.Dbinfo
-	dbconf   setting.Dbconf
-	DiscuzDb *sql.DB
-	HybbsDb  *sql.DB
+	dbinfo     setting.Dbinfo
+	dbconf     setting.Dbconf
+	DiscuzDb   *sql.DB
+	HybbsDb    *sql.DB
 	DiscuzDbTx *sql.Tx
-	HybbsDbTx *sql.Tx
+	HybbsDbTx  *sql.Tx
 )
 
 type Convert struct {
