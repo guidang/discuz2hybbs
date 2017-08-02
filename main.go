@@ -169,9 +169,6 @@ func (mw *MyMainWindow) showCheckVersion_Triggered() {
 		log.Println(err)
 	}
 
-	respStr := string(body)
-	//log.Println(respStr)
-
 	var dataStr versionData
 	var message string
 	var infoStyle walk.MsgBoxStyle
