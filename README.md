@@ -27,6 +27,9 @@ go build -ldflags="-H windowsgui"
 - ✔优化 GUI 窗口 - 添加转换日志展示
 - 添加 **Discuz!X3.x** 的转换
 
+## 截图
+![截图](screenshot/v0.0.1.png)
+
 ## 注意事项
 > 由于此项目本身是本人自用的，程序为 Discuz!7.2, ucenter 与 Discuz 相同数据库；   
 > discuz 表前缀为 **cdb_**，ucenter 表前缀为 **cdb_uc_**。
