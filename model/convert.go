@@ -2,13 +2,11 @@ package model
 
 import (
 	"github.com/lxn/walk"
-	//. "github.com/lxn/walk/declarative"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/skiy/DiscuzToHybbs/setting"
 )
 
 import (
-	"../setting"
-	conf "../setting"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -29,7 +27,7 @@ var (
 )
 
 type Convert struct {
-	Info conf.Info
+	Info setting.Info
 	Form walk.Form
 	Te   *walk.TextEdit
 }

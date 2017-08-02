@@ -12,8 +12,6 @@ import (
 )
 
 import (
-	//"./model"
-	//"./setting"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
