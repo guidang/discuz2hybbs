@@ -46,7 +46,7 @@ func (u *User) Init() (err error) {
 }
 
 func (u *User) ToConvert() (err error) {
-	log.Println("正在转换 " + u.tbname + " ...")
+	SetConvertLog("正在转换 "+u.tbname+" ...", 0)
 
 	err = Truncate(u.tbname)
 	if err != nil {
@@ -59,14 +59,14 @@ func (u *User) ToConvert() (err error) {
 
 	data, err := DiscuzDbTx.Query(dzSqlStr)
 	if err != nil {
-		log.Println("Dz user 查询失败: " + dzSqlStr)
+		SetConvertLog("Dz user 查询失败: "+dzSqlStr, -1)
 		log.Println(err)
 		return
 	}
 
 	stmt, err := HybbsDb.Prepare(hySqlStr)
 	if err != nil {
-		log.Println("Hy user 预加载失败: " + hySqlStr)
+		SetConvertLog("Hy user 预加载失败: "+hySqlStr, -1)
 		log.Println(err)
 		return
 	}
@@ -78,7 +78,7 @@ func (u *User) ToConvert() (err error) {
 		d1 := new(dzUser)
 		err = data.Scan(&d1.uid, &d1.username, &d1.password, &d1.email, &d1.threads, &d1.posts, &d1.regdate, &d1.credits, &d1.lastvisit, &d1.salt)
 		if err != nil {
-			log.Println("Dz user 扫描取值失败")
+			SetConvertLog("Dz user 扫描取值失败", -1)
 			log.Println(err)
 			return
 		}
@@ -113,9 +113,12 @@ func (u *User) ToConvert() (err error) {
 	HybbsDbTx.Commit()
 
 	if err == nil {
-		log.Printf("%s 转换成功, 总共插入 %d 条数据", u.tbname, stat)
+		msg := fmt.Sprintf("%s 转换成功, 总共插入 %d 条数据", u.tbname, stat)
+		SetConvertLog(msg, 0)
 	} else {
-		log.Printf("%s 转换失败", u.tbname)
+		msg := fmt.Sprintf("%s 转换失败")
+		SetConvertLog(msg, -1)
+		log.Println(err)
 	}
 	return
 }
@@ -129,11 +132,13 @@ func (u *User) setManager() (err error) {
 
 	_, err = HybbsDb.Exec(hySqlStr, u.adminid)
 	if err != nil {
-		log.Println("Dz user 设置管理员失败")
+		SetConvertLog("Hy user 设置管理员失败", -1)
 		log.Println(err)
 		return
 	} else {
-		log.Printf("\r\nDz user 设置管理员为 %s 成功\r\n", u.adminid)
+		msg := fmt.Sprintf("Hy user 设置管理员为 %s 成功", u.adminid)
+		SetConvertLog(msg, -1)
+		log.Println(err)
 	}
 	return
 }

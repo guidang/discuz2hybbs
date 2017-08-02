@@ -20,3 +20,11 @@ func Truncate(tb string) (err error) {
 	}
 	return
 }
+
+func SetConvertLog(msg string, code int) {
+	if code != 2 && msg != "" {
+		log.Println(msg)
+	}
+	msg = Te.Text() + "\r\n" + msg
+	Te.SetText(msg)
+}

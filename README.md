@@ -24,7 +24,7 @@ go build -ldflags="-H windowsgui"
 - ✔实现数据的转换 - hy_user.
 - <del>实现数据的转换 - hy_file</del> (由于hybbs与discuz附件架构严重冲突,故暂时解决不了)
 - ✔优化数据库 - 使用事务处理方式
-- 优化 GUI 窗口 - 添加转换日志展示
+- ✔优化 GUI 窗口 - 添加转换日志展示
 - 添加 **Discuz!X3.x** 的转换
 
 ## 注意事项

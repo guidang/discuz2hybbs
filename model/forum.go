@@ -38,7 +38,7 @@ func (f *Forum) Init() (err error) {
 }
 
 func (f *Forum) ToConvert() (err error) {
-	log.Println("正在转换 " + f.tbname + " ...")
+	SetConvertLog("正在转换 "+f.tbname+" ...", 0)
 
 	err = Truncate(f.tbname)
 	if err != nil {
@@ -50,14 +50,14 @@ func (f *Forum) ToConvert() (err error) {
 
 	data, err := DiscuzDbTx.Query(dzSqlStr)
 	if err != nil {
-		log.Println("Dz forum 查询失败: " + dzSqlStr)
+		SetConvertLog("Dz forum 查询失败: "+dzSqlStr, -1)
 		log.Println(err)
 		return
 	}
 
 	stmt, err := HybbsDbTx.Prepare(hySqlStr)
 	if err != nil {
-		log.Println("Hy forum 预加载失败: " + hySqlStr)
+		SetConvertLog("Hy forum 预加载失败: "+hySqlStr, -1)
 		log.Println(err)
 		return
 	}
@@ -73,7 +73,7 @@ func (f *Forum) ToConvert() (err error) {
 		d1 := new(dzForum)
 		err = data.Scan(&d1.fid, &d1.fup, &d1.types, &d1.name, &d1.threads, &d1.posts, &d1.desc)
 		if err != nil {
-			log.Println("Dz forum 扫描取值失败")
+			SetConvertLog("Dz forum 扫描取值失败", -1)
 			log.Println(err)
 			return
 		}
@@ -117,7 +117,7 @@ func (f *Forum) ToConvert() (err error) {
 	//分组表
 	stmt2, err := HybbsDbTx.Prepare(fmt.Sprintf("INSERT INTO %s (id, name) VALUES (?, ?)", f.tbname2))
 	if err != nil {
-		log.Println(f.tbname2 + " 预加载失败: ")
+		SetConvertLog(f.tbname2+" 预加载失败", -1)
 		log.Println(err)
 		return
 	}
@@ -129,7 +129,8 @@ func (f *Forum) ToConvert() (err error) {
 		//fmt.Printf("arr[%s]=%s \n", index, value)
 		_, err = stmt2.Exec(index, value)
 		if err != nil {
-			log.Println(f.tbname2 + " 导入失败")
+			SetConvertLog(f.tbname2+" 导入失败", -1)
+			log.Println(err)
 			return
 		}
 	}
@@ -154,9 +155,12 @@ func (f *Forum) ToConvert() (err error) {
 	HybbsDbTx.Commit()
 
 	if err == nil {
-		log.Printf("%s 转换成功, 总共插入 %d 条数据", f.tbname, stat)
+		msg := fmt.Sprintf("%s 转换成功, 总共插入 %d 条数据", f.tbname, stat)
+		SetConvertLog(msg, 0)
 	} else {
-		log.Printf("%s 转换失败", f.tbname)
+		msg := fmt.Sprintf("%s 转换失败")
+		SetConvertLog(msg, -1)
+		log.Println(err)
 	}
 	return
 }

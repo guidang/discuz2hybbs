@@ -36,7 +36,7 @@ var (
 )
 
 func (d *Database) Create() (int, error) {
-	log.Println("database Create")
+	//log.Println("database Create")
 
 	if err := d.ReadConfig(); err != nil {
 		log.Println(err)
@@ -166,7 +166,7 @@ func (d *Database) Create() (int, error) {
 }
 
 func (d *Database) ReadConfig() (err error) {
-	log.Println("ReadConfig 读取文件")
+	//log.Println("ReadConfig 读取文件")
 	if _, err := os.Stat(dbpath); os.IsNotExist(err) {
 		log.Println("数据库配置文件不存在")
 		return err

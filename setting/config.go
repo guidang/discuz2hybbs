@@ -19,7 +19,7 @@ type Info struct {
 }
 
 func (c *Config) Create() (code int, err error) {
-	log.Println("config Create")
+	//log.Println("config Create")
 
 	var dlg *walk.Dialog
 	var db *walk.DataBinder

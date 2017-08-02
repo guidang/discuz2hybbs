@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/lxn/walk"
 	//. "github.com/lxn/walk/declarative"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 import (
@@ -12,10 +13,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 )
 
 var (
@@ -30,14 +31,39 @@ var (
 type Convert struct {
 	Info conf.Info
 	Form walk.Form
+	Te   *walk.TextEdit
+}
+
+type Msg struct {
+	code int
+	log  string
+}
+
+var (
+	Te *walk.TextEdit
+)
+
+func (c *Convert) Create() {
+	t1 := time.Now()
+
+	Te = c.Te
+	c.ToHybbs()
+
+	t2 := time.Now()
+	d := t2.Sub(t1)
+	msg := fmt.Sprintf("\r\n已经成功将 Discuz 转换成 Hybbs, 总共耗时: %s\r\n", d)
+
+	msg = Te.Text() + msg
+	Te.SetText(msg)
 }
 
 func (c *Convert) ReadConfig() {
-	log.Println("ReadConfig 读取文件")
+	SetConvertLog("读取数据库配置信息...", 0)
 
 	dbpath := "db.json"
 	if _, err := os.Stat(dbpath); os.IsNotExist(err) {
-		log.Println("数据库配置文件不存在")
+		SetConvertLog("数据库配置文件不存在", -1)
+		log.Println(err)
 		return
 	}
 
@@ -52,7 +78,7 @@ func (c *Convert) ReadConfig() {
 	//dataStr := fmt.Sprintf("%s", data)
 	//log.Println(dataStr)
 	if err := json.Unmarshal(bytes, &dbconf); err != nil {
-		log.Println("Json转Struct出错")
+		SetConvertLog("Json转Struct出错", -1)
 		log.Println(err)
 		return
 	}
@@ -128,8 +154,9 @@ func (c *Convert) Tx() {
 	return
 }
 
-func (c *Convert) ToHybbs() (err error) {
+func (c *Convert) ToHybbs() {
 	c.ReadConfig()
+	var err error
 
 	DiscuzDb, err = c.CheckConnect(1)
 	if err != nil {
@@ -182,5 +209,5 @@ func (c *Convert) ToHybbs() (err error) {
 		return
 	}
 
-	return nil
+	SetConvertLog("", 2)
 }

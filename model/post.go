@@ -36,7 +36,7 @@ func (p *Post) Init() (err error) {
 }
 
 func (p *Post) ToConvert() (err error) {
-	log.Println("正在转换 " + p.tbname + " ...")
+	SetConvertLog("正在转换 "+p.tbname+" ...", 0)
 
 	err = Truncate(p.tbname)
 	if err != nil {
@@ -48,14 +48,14 @@ func (p *Post) ToConvert() (err error) {
 
 	data, err := DiscuzDbTx.Query(dzSqlStr)
 	if err != nil {
-		log.Println("Dz post 查询失败: " + dzSqlStr)
+		SetConvertLog("Dz post 查询失败: "+dzSqlStr, -1)
 		log.Println(err)
 		return
 	}
 
 	stmt, err := HybbsDbTx.Prepare(hySqlStr)
 	if err != nil {
-		log.Println("Hy post 预加载失败: " + hySqlStr)
+		SetConvertLog("Hy post 预加载失败: "+hySqlStr, -1)
 		log.Println(err)
 		return
 	}
@@ -68,7 +68,7 @@ func (p *Post) ToConvert() (err error) {
 		d1 := new(dzPost)
 		err = data.Scan(&d1.pid, &d1.tid, &d1.fid, &d1.authorid, &d1.first, &d1.message, &d1.dateline)
 		if err != nil {
-			log.Println("Dz post 扫描取值失败")
+			SetConvertLog("Dz post 扫描取值失败", -1)
 			log.Println(err)
 			return
 		}
@@ -104,9 +104,12 @@ func (p *Post) ToConvert() (err error) {
 	HybbsDbTx.Commit()
 
 	if err == nil {
-		log.Printf("%s 转换成功, 总共插入 %d 条数据", p.tbname, stat)
+		msg := fmt.Sprintf("%s 转换成功, 总共插入 %d 条数据", p.tbname, stat)
+		SetConvertLog(msg, 0)
 	} else {
-		log.Printf("%s 转换失败", p.tbname)
+		msg := fmt.Sprintf("%s 转换失败")
+		SetConvertLog(msg, -1)
+		log.Println(err)
 	}
 	return
 }
