@@ -3,7 +3,7 @@ package model
 import (
 	"github.com/lxn/walk"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/skiy/DiscuzToHybbs/setting"
+	"github.com/skiy/discuz2hybbs/setting"
 )
 
 import (

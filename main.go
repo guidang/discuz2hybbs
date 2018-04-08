@@ -7,8 +7,8 @@ import (
 import (
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
-	"github.com/skiy/DiscuzToHybbs/model"
-	"github.com/skiy/DiscuzToHybbs/setting"
+	"github.com/skiy/discuz2hybbs/model"
+	"github.com/skiy/discuz2hybbs/setting"
 )
 
 import (
