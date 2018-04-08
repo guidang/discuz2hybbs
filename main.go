@@ -201,9 +201,9 @@ Q Q:  1005043848
 
 func (mw *MyMainWindow) showAboutBoxAction_Triggered() {
 	var msg string = `
-Version: 0.0.1
+Version: 0.1.0
 
-Project: https://github.com/skiy/DiscuzToHybbs
+Project: https://github.com/skiy/discuz2hybbs
 `
 	walk.MsgBox(mw, "关于软件", msg, walk.MsgBoxIconInformation)
 }
