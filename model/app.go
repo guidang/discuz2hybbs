@@ -92,9 +92,9 @@ func (this *App) Init() {
 	}
 
 	tables := [...]string{
-		//"forum",
-		//"thread",
-		//"post",
+		"forum",
+		"thread",
+		"post",
 		"user",
 	}
 
