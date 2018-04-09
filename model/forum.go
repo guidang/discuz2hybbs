@@ -48,14 +48,14 @@ func (f *Forum) ToConvert() (err error) {
 	dzSqlStr := "SELECT f.fid, f.fup, f.type, f.name, f.threads, f.posts, z.description  FROM `cdb_forums` f LEFT JOIN `cdb_forumfields` z ON f.fid = z.fid"
 	hySqlStr := fmt.Sprintf("INSERT INTO %s (id, fid, fgid, name, threads, posts, html, name2, forumg, json, color, background) VALUES (?, ?, ?, ?, ?, ?, ?, '', '', '', '', '')", f.tbname)
 
-	data, err := DiscuzDbTx.Query(dzSqlStr)
+	data, err := DiscuzDb.Query(dzSqlStr)
 	if err != nil {
 		SetConvertLog("Dz forum 查询失败: "+dzSqlStr, -1)
 		log.Println(err)
 		return
 	}
 
-	stmt, err := HybbsDbTx.Prepare(hySqlStr)
+	stmt, err := HybbsDb.Prepare(hySqlStr)
 	if err != nil {
 		SetConvertLog("Hy forum 预加载失败: "+hySqlStr, -1)
 		log.Println(err)
@@ -110,12 +110,9 @@ func (f *Forum) ToConvert() (err error) {
 
 		dataArr = append(dataArr, hydata)
 	}
-	defer DiscuzDbTx.Rollback()
-	DiscuzDbTx.Commit()
-
 	//log.Println(groupMap)
 	//分组表
-	stmt2, err := HybbsDbTx.Prepare(fmt.Sprintf("INSERT INTO %s (id, name) VALUES (?, ?)", f.tbname2))
+	stmt2, err := HybbsDb.Prepare(fmt.Sprintf("INSERT INTO %s (id, name) VALUES (?, ?)", f.tbname2))
 	if err != nil {
 		SetConvertLog(f.tbname2+" 预加载失败", -1)
 		log.Println(err)
@@ -151,8 +148,6 @@ func (f *Forum) ToConvert() (err error) {
 
 		stat++
 	}
-	defer HybbsDbTx.Rollback()
-	HybbsDbTx.Commit()
 
 	if err == nil {
 		msg := fmt.Sprintf("%s 转换成功, 总共插入 %d 条数据", f.tbname, stat)

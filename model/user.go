@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	adminid,
+	Adminid,
 	tbname string
 }
 
@@ -50,14 +50,15 @@ func (u *User) ToConvert() (err error) {
 
 	err = Truncate(u.tbname)
 	if err != nil {
+		fmt.Println(err.Error())
 		return
 	}
 
 	//dzSqlStr := "SELECT uid, username, password, email, threads, posts, regdate, credits, lastvisit FROM `cdb_members`"
 	dzSqlStr := "SELECT m.uid, m.username, c.password, m.email, m.threads, m.posts, m.regdate, m.credits, m.lastvisit, c.salt FROM `cdb_members` m LEFT JOIN `cdb_uc_members` c ON c.uid = m.uid WHERE c.salt IS NOT NULL"
-	hySqlStr := fmt.Sprintf("INSERT INTO %s (id, user, pass, email, threads, posts, atime, credits, ctime, salt, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 2)", u.tbname)
+	hySqlStr := fmt.Sprintf("INSERT INTO %s (uid, user, pass, email, threads, posts, post_ps, atime, credits, ctime, salt, gid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 2)", u.tbname)
 
-	data, err := DiscuzDbTx.Query(dzSqlStr)
+	data, err := DiscuzDb.Query(dzSqlStr)
 	if err != nil {
 		SetConvertLog("Dz user 查询失败: "+dzSqlStr, -1)
 		log.Println(err)
@@ -72,7 +73,6 @@ func (u *User) ToConvert() (err error) {
 	}
 
 	var stat int
-	var dataArr []hyUser
 
 	for data.Next() {
 		d1 := new(dzUser)
@@ -83,7 +83,7 @@ func (u *User) ToConvert() (err error) {
 			return
 		}
 
-		hydata := hyUser{
+		value := hyUser{
 			d1.uid,
 			d1.username,
 			d1.password,
@@ -96,21 +96,14 @@ func (u *User) ToConvert() (err error) {
 			d1.salt,
 		}
 
-		dataArr = append(dataArr, hydata)
-	}
-	defer DiscuzDbTx.Rollback()
-	DiscuzDbTx.Commit()
-
-	for _, value := range dataArr {
-		_, err = stmt.Exec(value.id, value.user, value.pass, value.email, value.threads, value.posts, value.atime, value.credits, value.ctime, value.salt)
+		_, err = stmt.Exec(value.id, value.user, value.pass, value.email, value.threads, value.posts, value.posts, value.atime, value.credits, value.ctime, value.salt)
 		if err != nil {
-			return
+			fmt.Println("err: "+err.Error(), value.id)
+			continue
 		}
 
 		stat++
 	}
-	defer HybbsDbTx.Rollback()
-	HybbsDbTx.Commit()
 
 	if err == nil {
 		msg := fmt.Sprintf("%s 转换成功, 总共插入 %d 条数据", u.tbname, stat)
@@ -124,19 +117,19 @@ func (u *User) ToConvert() (err error) {
 }
 
 func (u *User) setManager() (err error) {
-	hySqlStr := fmt.Sprintf("UPDATE %s SET `group` = 1 WHERE id = ?", u.tbname)
+	hySqlStr := fmt.Sprintf("UPDATE %s SET `gid` = 1 WHERE uid = ?", u.tbname)
 
-	if u.adminid == "" {
-		u.adminid = "1"
+	if u.Adminid == "" {
+		u.Adminid = "1"
 	}
 
-	_, err = HybbsDb.Exec(hySqlStr, u.adminid)
+	_, err = HybbsDb.Exec(hySqlStr, u.Adminid)
 	if err != nil {
 		SetConvertLog("Hy user 设置管理员失败", -1)
 		log.Println(err)
 		return
 	} else {
-		msg := fmt.Sprintf("Hy user 设置管理员为 %s 成功", u.adminid)
+		msg := fmt.Sprintf("Hy user 设置管理员为 %s 成功", u.Adminid)
 		SetConvertLog(msg, -1)
 		log.Println(err)
 	}

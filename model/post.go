@@ -44,16 +44,16 @@ func (p *Post) ToConvert() (err error) {
 	}
 
 	dzSqlStr := "SELECT pid, tid, fid, authorid, first, message, dateline FROM `cdb_posts`"
-	hySqlStr := fmt.Sprintf("INSERT INTO %s (id, tid, fid, uid, isthread, content, atime) VALUES (?, ?, ?, ?, ?, ?, ?)", p.tbname)
+	hySqlStr := fmt.Sprintf("INSERT INTO %s (pid, tid, fid, uid, isthread, content, atime) VALUES (?, ?, ?, ?, ?, ?, ?)", p.tbname)
 
-	data, err := DiscuzDbTx.Query(dzSqlStr)
+	data, err := DiscuzDb.Query(dzSqlStr)
 	if err != nil {
 		SetConvertLog("Dz post 查询失败: "+dzSqlStr, -1)
 		log.Println(err)
 		return
 	}
 
-	stmt, err := HybbsDbTx.Prepare(hySqlStr)
+	stmt, err := HybbsDb.Prepare(hySqlStr)
 	if err != nil {
 		SetConvertLog("Hy post 预加载失败: "+hySqlStr, -1)
 		log.Println(err)
@@ -89,8 +89,6 @@ func (p *Post) ToConvert() (err error) {
 
 		dataArr = append(dataArr, hydata)
 	}
-	defer DiscuzDbTx.Rollback()
-	DiscuzDbTx.Commit()
 
 	for _, value := range dataArr {
 		_, err = stmt.Exec(value.id, value.tid, value.fid, value.uid, value.isthread, value.content, value.atime)
@@ -100,8 +98,6 @@ func (p *Post) ToConvert() (err error) {
 
 		stat++
 	}
-	defer HybbsDbTx.Rollback()
-	HybbsDbTx.Commit()
 
 	if err == nil {
 		msg := fmt.Sprintf("%s 转换成功, 总共插入 %d 条数据", p.tbname, stat)

@@ -28,7 +28,7 @@ type versionData struct {
 }
 
 const (
-	version = "0.0.1"
+	version = "0.1.0"
 )
 
 type MyMainWindow struct {
@@ -114,7 +114,7 @@ func main() {
 				Text: "开始转换",
 				OnClicked: func() {
 					//log.Println("点击开始转换")
-					convert := model.Convert{
+					convert := setting.Convert{
 						cf.Animal,
 						mw,
 						te,
@@ -193,7 +193,7 @@ func (mw *MyMainWindow) showCheckVersion_Triggered() {
 func (mw *MyMainWindow) showAboutAuthorAction_Triggered() {
 	var msg string = `
 作者: Skiychan
-Q Q:  1005043848
+Q Q:  86999070
 邮箱: dev@skiy.net
 网站: https://www.skiy.net`
 	walk.MsgBox(mw, "关于作者", msg, walk.MsgBoxIconInformation)
