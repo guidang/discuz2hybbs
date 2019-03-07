@@ -1,6 +1,7 @@
 Discuz7.2 转换为 HYBBS
 ------
-一个将Discuz7.2转换成Hybbs的Windows应用程序。
+一个将Discuz7.2转换成Hybbs的Windows应用程序。   
+**此项目已停止维护**
 
 ## 使用教程
 **安装本项目**
@@ -40,6 +41,6 @@ go build -ldflags="-H windowsgui"
 
 
 ## 联系
-作者: Skiychan <dev@skiy.net>   
-QQ  : 1005043848   
-网站: https://www.skiy.net
+Author: Skiychan   
+Email: dev@skiy.net   
+Link: https://www.skiy.net   

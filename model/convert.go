@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/lxn/walk"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/lxn/walk"
 	"github.com/skiy/discuz2hybbs/setting"
 )
 
